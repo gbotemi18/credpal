@@ -49,21 +49,22 @@ node src/index.js
 
 ## CI/CD (GitHub Actions)
 
-Workflows are in `.github/workflows/`:
+Workflow is in `.github/workflows/ci.yml`:
 
-- `ci.yml`
-  - runs on PRs to `main` and pushes to `main`
-  - installs dependencies and runs tests
-  - builds the Docker image (no push)
-- `release-image.yml`
-  - runs on pushes to `main`
-  - builds and **pushes** the Docker image to **GitHub Container Registry (GHCR)**
-  - includes a `deploy-production` job gated by the GitHub **Environment** named `production`
+- runs on PRs to `main` and pushes to `main`
+- installs dependencies and runs tests
+- on pushes to `main`, builds and **pushes** the Docker image to **GitHub Container Registry (GHCR)**
+- deploys via Terraform using GitHub OIDC, gated by the GitHub **Environment** named `production`
+
+Required GitHub configuration:
+
+- **Secrets**: `AWS_ROLE_ARN` (OIDC role to assume for deploys)
+- **Variables**: `AWS_REGION` (optional, default `us-east-1`), `DOMAIN_NAME`, `HOSTED_ZONE_ID`
 
 ### Secrets management
 
 - No secrets are committed.
-- For AWS deploys, prefer **GitHub OIDC** (no long-lived AWS keys) and store any required values in GitHub Secrets/Environments.
+- For AWS deploys, prefer **GitHub OIDC** (no long-lived AWS keys) and store required values in GitHub Secrets/Variables.
 
 ## Infrastructure as Code (Terraform / AWS)
 
@@ -85,9 +86,15 @@ Terraform code lives in `terraform/` and provisions:
 
 ### Deploy (example)
 
-1) Push this repo to GitHub and ensure the image exists in GHCR (workflow `release-image.yml`).
+Option A: GitHub Actions (recommended)
 
-2) From `terraform/`, apply:
+1) Create an AWS IAM role trusted by GitHub OIDC and save its ARN as `AWS_ROLE_ARN`.
+2) Set repo variables: `DOMAIN_NAME`, `HOSTED_ZONE_ID` (and optionally `AWS_REGION`).
+3) Push to `main` and approve the `production` environment when prompted.
+
+Option B: Manual `terraform apply`
+
+1) From `terraform/`, apply:
 
 ```bash
 cd terraform
@@ -101,7 +108,7 @@ terraform apply \
   -var "container_image=ghcr.io/ORG/REPO/credpal-assessment:latest"
 ```
 
-3) Visit the output `app_url` and verify:
+2) Visit the output `app_url` and verify:
 
 - `GET https://app.example.com/health`
 - `GET https://app.example.com/status`
@@ -125,4 +132,3 @@ make tf-plan EXTRA_ARGS='-var "container_image=ghcr.io/ORG/REPO/credpal-assessme
 
 - Basic structured logging via `console.log`/`console.error`
 - CloudWatch logs configured for ECS task
-
