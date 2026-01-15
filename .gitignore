@@ -1,9 +1,48 @@
 node_modules/
 .env
+
 # Terraform provider binaries and cache (not the terraform/ directory with .tf files)
 .terraform/
 terraform.tfstate
 terraform.tfstate.*
+*.tfstate.backup
+
+# Logs
 crash.log
 *.log
+
+# Build artifacts and binaries
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+
+# Docker
+*.tar
+*.tar.gz
+docker-compose.override.yml
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Large files and archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Interview prep (personal notes)
 INTERVIEW_SUMMARY.md
+QUICK_START.md
