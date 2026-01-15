@@ -18,6 +18,7 @@ From the repo root:
 docker compose up --build
 ```
 
+
 Then:
 
 - Health: `curl http://localhost:3000/health`
