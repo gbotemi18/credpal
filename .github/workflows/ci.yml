@@ -1,6 +1,4 @@
 name: CI (Node + Docker)
-
-
 on:
   push:
     branches: [ main ]
