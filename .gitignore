@@ -1,5 +1,6 @@
 node_modules/
 .env
+# Terraform provider binaries and cache (not the terraform/ directory with .tf files)
 .terraform/
 terraform.tfstate
 terraform.tfstate.*
