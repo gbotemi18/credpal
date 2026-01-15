@@ -1,11 +1,15 @@
 node_modules/
 .env
+.env.local
 
-# Terraform provider binaries and cache (not the terraform/ directory with .tf files)
+# Terraform - ignore provider binaries and state files
+# Keep: terraform/*.tf files and .terraform.lock.hcl
 .terraform/
+**/.terraform/
 terraform.tfstate
 terraform.tfstate.*
 *.tfstate.backup
+.terraform.lock.hcl.bak
 
 # Logs
 crash.log
